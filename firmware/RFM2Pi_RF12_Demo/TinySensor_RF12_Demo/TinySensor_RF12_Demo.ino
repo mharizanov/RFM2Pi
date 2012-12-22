@@ -82,7 +82,8 @@ static void saveConfig () {
     eeprom_write_byte(RF12_EEPROM_ADDR + RF12_EEPROM_SIZE-1 ,config.crc>>8);
     
     if (!rf12_config())
-        mySerial.println("config save failed");
+        showString(PSTR("config failed"));
+
 }
 
 
@@ -112,7 +113,7 @@ static void showString (PGM_P s) {
 
 static void showHelp () {
     showString(helpText1);
-    mySerial.println("Current configuration:");
+    showString(PSTR("Current configuration:\n"));
     config.nodeId = eeprom_read_byte(RF12_EEPROM_ADDR);
     config.group = eeprom_read_byte(RF12_EEPROM_ADDR + 1);
     config.lock = eeprom_read_byte(RF12_EEPROM_ADDR + 2);
@@ -133,21 +134,21 @@ static void showHelp () {
  
     byte id = config.nodeId & 0x1F;
     mySerial.print('@' + id,DEC);
-    mySerial.print(" i");
+    showString(PSTR(" i"));
     mySerial.print( id,DEC);
     if (config.nodeId & COLLECT)
-         mySerial.print('*');
+         mySerial.print("*");
     
-    mySerial.print(" g");
+    showString(PSTR(" g"));
     mySerial.print(config.group,DEC);
     
-    mySerial.print(" @ ");
+    showString(PSTR(" @ "));
     static word bands[4] = { 315, 433, 868, 915 };
     word band = config.nodeId >> 6;
     mySerial.print(bands[band],DEC);
-    mySerial.print( " MHz ");
+    showString(PSTR(" MHz "));
 
-    mySerial.print( " Lock: ");
+    showString(PSTR(" Lock: "));
     mySerial.println(config.lock, DEC);
 
     rf12_config();
@@ -161,7 +162,7 @@ static void handleInput (char c) {
             stack[top++] = value;
         value = 0;
     } else if ('a' <= c && c <='z') {
-        mySerial.print("> ");
+        showString(PSTR("> "));
         mySerial.print((int) value);
         mySerial.println(c);
         switch (c) {
@@ -230,14 +231,12 @@ void setup() {
     activityLed(1);
     pinMode(rxPin, INPUT);
     pinMode(txPin, OUTPUT);
-    
     // set the data rate for the NewSoftmymySerial port
     mySerial.begin(9600);
-    
-    mySerial.print("\n[RFM2Pi]\n\r");
-
+    showString(PSTR("\n[RFM2Pi]\n"));   
+    showHelp();
     delay(2000);
-
+    
     if (rf12_config()) {
         config.nodeId = eeprom_read_byte(RF12_EEPROM_ADDR);
         config.group = eeprom_read_byte(RF12_EEPROM_ADDR + 1);
@@ -246,11 +245,11 @@ void setup() {
         config.nodeId = 0x81; // node A1 @ 868 MHz
         config.group = 0xD2;  //210
         config.lock=1;   //Unlocked
-        rf12_initialize(config.nodeId&0x1F, config.nodeId >> 6 ,config.group);        
+        rf12_initialize(config.nodeId&0x1F, config.nodeId >> 6 ,config.group);  
         saveConfig();
     }
-   
-    showHelp();
+
+    rf12_control(0xC049);   
     activityLed(0);
 }
 
@@ -259,8 +258,18 @@ void loop() {
         handleInput(mySerial.read());
 
     if (rf12_recvDone() & (rf12_crc == 0) ) {
-        activityLed(1);      
+
         byte n = rf12_len;
+
+        activityLed(1);            
+        
+        if (RF12_WANTS_ACK && (config.nodeId & COLLECT) == 0) {
+           rf12_sendStart(RF12_ACK_REPLY, 0, 0);
+           rf12_sendWait(2);           // Wait for RF to finish sending while in standby mode      
+           mySerial.println(" -> ack");
+        }            
+        
+
 
         if (config.group == 0) {
             mySerial.print("G ");
@@ -276,16 +285,8 @@ void loop() {
         
         activityLed(0);
            
-        if (rf12_crc == 0) {
-            activityLed(1);
-            
-            if (RF12_WANTS_ACK && (config.nodeId & COLLECT) == 0) {
-                mySerial.println(" -> ack");
-                rf12_sendStart(RF12_ACK_REPLY, 0, 0);
-            }
-            
-            activityLed(0);
-        }
+
+        
     }
 
     if (cmd && rf12_canSend()) {
