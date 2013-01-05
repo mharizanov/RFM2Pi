@@ -269,14 +269,12 @@ void loop() {
            mySerial.println(" -> ack");
         }            
         
-
-
         if (config.group == 0) {
             mySerial.print("G ");
             mySerial.print((int) rf12_grp);
         }
         mySerial.print(' ');
-        mySerial.print((int) rf12_hdr);
+        mySerial.print((int) rf12_hdr & 0x1F);
         for (byte i = 0; i < n; ++i) {
             mySerial.print(' ');
             mySerial.print((int) rf12_data[i]);
@@ -284,9 +282,7 @@ void loop() {
         mySerial.println();
         
         activityLed(0);
-           
-
-        
+                   
     }
 
     if (cmd && rf12_canSend()) {
