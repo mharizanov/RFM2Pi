@@ -234,8 +234,6 @@ void setup() {
     // set the data rate for the NewSoftmymySerial port
     mySerial.begin(9600);
     showString(PSTR("\n[RFM2Pi]\n"));   
-    showHelp();
-    delay(2000);
     
     if (rf12_config()) {
         config.nodeId = eeprom_read_byte(RF12_EEPROM_ADDR);
@@ -248,6 +246,9 @@ void setup() {
         rf12_initialize(config.nodeId&0x1F, config.nodeId >> 6 ,config.group);  
         saveConfig();
     }
+
+    showHelp();
+    delay(2000);
 
     rf12_control(0xC049);   
     activityLed(0);
