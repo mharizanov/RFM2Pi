@@ -258,15 +258,16 @@ void loop() {
     if (mySerial.available())
         handleInput(mySerial.read());
 
-    if (rf12_recvDone() & (rf12_crc == 0) ) {
+    if (rf12_recvDone() && (rf12_crc == 0) ) {
 
         byte n = rf12_len;
 
-        activityLed(1);            
         
+        activityLed(1);            
+                            
         if (RF12_WANTS_ACK && (config.nodeId & COLLECT) == 0) {
+           byte i = 0; while (!rf12_canSend() && i<10) {rf12_recvDone(); i++;}  // if ready to send 
            rf12_sendStart(RF12_ACK_REPLY, 0, 0);
-           rf12_sendWait(2);           // Wait for RF to finish sending while in standby mode      
            mySerial.println(" -> ack");
         }            
         
