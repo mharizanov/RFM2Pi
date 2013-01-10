@@ -261,14 +261,15 @@ void loop() {
     if (rf12_recvDone() && (rf12_crc == 0) ) {
 
         byte n = rf12_len;
-
+        byte acked=0;
         
         activityLed(1);            
                             
         if (RF12_WANTS_ACK && (config.nodeId & COLLECT) == 0) {
            byte i = 0; while (!rf12_canSend() && i<10) {rf12_recvDone(); i++;}  // if ready to send 
            rf12_sendStart(RF12_ACK_REPLY, 0, 0);
-           mySerial.println(" -> ack");
+           rf12_sendWait(2);           // Wait for RF to finish sending while in standby mode
+           acked=1;
         }            
         
         if (config.group == 0) {
@@ -282,6 +283,7 @@ void loop() {
             mySerial.print((int) rf12_data[i]);
         }
         mySerial.println();
+        if(acked)  showString(PSTR(" -> ack\n"));
         
         activityLed(0);
                    
@@ -290,7 +292,7 @@ void loop() {
     if (cmd && rf12_canSend()) {
         activityLed(1);
 
-        mySerial.print(" -> ");
+        showString(PSTR(" -> "));
         mySerial.print((int) sendLen);
         mySerial.println(" b");
         byte header = cmd == 'a' ? RF12_HDR_ACK : 0;
