@@ -89,7 +89,7 @@ while ($continue) {
           my $msubs ="";
           for(my $i=1; $i<@values; $i+=2){
             $msubs .= $values[$i] + $values[$i+1]*256;
-            if($i!=@values-2) {$msubs .= ","}; }
+            if($i!=@values-2) {$msubs .= ","}; 
  	  }
           post2emoncms($values[0],$msubs);
 
