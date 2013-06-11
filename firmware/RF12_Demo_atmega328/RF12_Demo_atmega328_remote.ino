@@ -80,6 +80,9 @@ char helpText1[] PROGMEM =
     "  ...,<nn> a - send data packet to node <nn>, with ack" "\n"
     "  ...,<nn> s - send data packet to node <nn>, no ack" "\n"
     "  <n> l      - turn activity LED on DIG8 on or off" "\n"
+    "Remote control commands:" "\n"
+    "  <hchi>,<hclo>,<addr>,<cmd> f     - FS20 command (868 MHz)" "\n"
+    "  <addr>,<dev>,<on> k              - KAKU command (433 MHz)" "\n"
 ;
 
 static void showString (PGM_P s) {
