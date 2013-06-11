@@ -744,13 +744,13 @@ void loop() {
     if (rf12_crc == 0)
       //Serial.print("OK");
       activityLed(1);
-    else {
-      if (quiet)
-        return;
-      Serial.print(" ?");
-      if (n > 20) // print at most 20 bytes if crc is wrong
-        n = 20;
-    }
+    //else {
+    //  if (quiet)
+    //    return;
+    //  Serial.print(" ?");
+     // if (n > 20) // print at most 20 bytes if crc is wrong
+      //  n = 20;
+    //}
     if (useHex)
       Serial.print('X');
     if (config.group == 0) {
