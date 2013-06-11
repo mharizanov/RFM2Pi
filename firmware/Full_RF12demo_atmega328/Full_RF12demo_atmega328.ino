@@ -716,7 +716,7 @@ static void handleInput (char c) {
 void setup() {
   Serial.begin(SERIAL_BAUD);
   Serial.print("\n[RF12demo.10_RFM2Pi]");
-  activityLed(0);
+  activityLed(1);
 
   if (rf12_config()) {
     config.nodeId = eeprom_read_byte(RF12_EEPROM_ADDR);
@@ -730,6 +730,9 @@ void setup() {
   df_initialize();
   
   showHelp();
+  delay(2000);
+  
+  activityLed(0);
 }
 
 void loop() {
@@ -739,7 +742,8 @@ void loop() {
   if (rf12_recvDone()) {
     byte n = rf12_len;
     if (rf12_crc == 0)
-      Serial.print("OK");
+      //Serial.print("OK");
+      activityLed(1);
     else {
       if (quiet)
         return;
