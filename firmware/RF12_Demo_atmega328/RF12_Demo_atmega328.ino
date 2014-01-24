@@ -225,7 +225,7 @@ void setup() {
         config.lock=1;   //Unlocked
         rf12_initialize(config.nodeId&0x1F, config.nodeId >> 6 ,config.group);  
         saveConfig();
-    }
+    }avrdude -v  -c arduino -p ATMEGA328P -P /dev/ttyAMA0 -b 38400 -U flash:w:RF12_Demo_atmega328.cpp.hex
 
     showHelp();
     delay(2000);
