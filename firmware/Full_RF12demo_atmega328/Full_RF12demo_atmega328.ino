@@ -4,6 +4,8 @@
 
 // this version adds flash memory support, 2009-11-19
 
+#include <WProgram.h>
+
 #include <JeeLib.h>
 #include <util/crc16.h>
 #include <util/parity.h>
@@ -13,7 +15,7 @@
 
 #define SERIAL_BAUD 9600
 
-#define DATAFLASH 1 // check for presence of DataFlash memory on JeeLink
+#define DATAFLASH 0 // check for presence of DataFlash memory on JeeLink
 #define FLASH_MBIT  16  // support for various dataflash sizes: 4/8/16 Mbit
 
 #define LED_PIN   9 // activity LED, comment out to disable
@@ -750,9 +752,8 @@ void loop() {
 
   if (rf12_recvDone()) {
     byte n = rf12_len;
-    if (rf12_crc == 0)
+    //if (rf12_crc == 0)
       //Serial.print("OK");
-      activityLed(1);
     //else {
     //  if (quiet)
     //    return;
@@ -760,6 +761,9 @@ void loop() {
      // if (n > 20) // print at most 20 bytes if crc is wrong
       //  n = 20;
     //}
+    if (rf12_crc!=0)
+        return;
+    activityLed(1);
     if (useHex)
       Serial.print('X');
     if (config.group == 0) {
@@ -775,8 +779,8 @@ void loop() {
     }
     Serial.println();
     
-    if (rf12_crc == 0) {
-      activityLed(1);
+    //if (rf12_crc == 0) {
+    //  activityLed(1);
       
       if (df_present())
         df_append((const char*) rf12_data - 2, rf12_len + 2);
@@ -787,7 +791,7 @@ void loop() {
       }
       
       activityLed(0);
-    }
+   // }
   }
 
   if (cmd && rf12_canSend()) {
