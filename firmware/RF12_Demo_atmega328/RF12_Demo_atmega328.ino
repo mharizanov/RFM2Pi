@@ -2,6 +2,7 @@
 // Configure some values in EEPROM for easy config of the RF12 later on.
 // 2009-05-06 <jc@wippler.nl> http://opensource.org/licenses/mit-license.php
 
+#define RF69_COMPAT 0 // define this to use the RF69 driver i.s.o. RF12
 
 #include <JeeLib.h>
 #include <util/crc16.h>
