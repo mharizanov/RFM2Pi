@@ -2,7 +2,6 @@
 // Configure some values in EEPROM for easy config of the RF12 later on.
 // 2009-05-06 <jc@wippler.nl> http://opensource.org/licenses/mit-license.php
 
-#define RF69_COMPAT 0 // define this to use the RF69 driver i.s.o. RF12
 
 #include <JeeLib.h>
 #include <util/crc16.h>
@@ -40,8 +39,8 @@ typedef struct {
 static RF12Config config;
 
 static char cmd;
-static byte value, stack[66], top, sendLen, dest, quiet;
-static byte testbuf[66], testCounter;
+static byte value, stack[20], top, sendLen, dest, quiet;
+static byte testbuf[20], testCounter;
 
 
 static void saveConfig () {
@@ -226,7 +225,7 @@ void setup() {
         config.lock=1;   //Unlocked
         rf12_initialize(config.nodeId&0x1F, config.nodeId >> 6 ,config.group);  
         saveConfig();
-    }
+    }avrdude -v  -c arduino -p ATMEGA328P -P /dev/ttyAMA0 -b 38400 -U flash:w:RF12_Demo_atmega328.cpp.hex
 
     showHelp();
     delay(2000);

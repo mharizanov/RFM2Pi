@@ -113,7 +113,7 @@ static unsigned long now () {
 static void activityLed (byte on) {
 #ifdef LED_PIN
     pinMode(LED_PIN, OUTPUT);
-    digitalWrite(LED_PIN, !on);
+    digitalWrite(LED_PIN, on);                //RFM12PI - changed to be not inverted 
 #endif
 }
 
@@ -535,6 +535,7 @@ static void displayVersion () {
 }
 
 void setup () {
+   activityLed(1);
     delay(100); // shortened for now. Handy with JeeNode Micro V1 where ISP
                 // interaction can be upset by RF12B startup process.
 
@@ -576,9 +577,13 @@ void setup () {
 #if !TINY
     showHelp();
 #endif
+
+ delay(1000);       //RFM12Pi - keep LED on for 1s to show it's working 
+ activityLed(0);
 }
 
 void loop () {
+ 
 #if TINY
     if (_receive_buffer_index)
         handleInput(inChar());
@@ -589,11 +594,9 @@ void loop () {
     if (rf12_recvDone()) {
         byte n = rf12_len;
         
-        //if (rf12_crc == 0)
-            //showString(PSTR("OK"));                   //strip out since we don't use this on RFM12Pi 
-        //else 
-        
-        if (rf12_crc != 0)
+        if (rf12_crc == 0)
+            showString(PSTR("OK"));                   //rfm12pI - strip out since we don't use this on RFM12Pi 
+        else 
         {
             if (config.quiet_mode)
                 return;
