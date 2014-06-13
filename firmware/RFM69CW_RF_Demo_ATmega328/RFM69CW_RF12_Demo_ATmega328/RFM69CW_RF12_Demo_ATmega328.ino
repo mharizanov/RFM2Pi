@@ -113,7 +113,7 @@ static unsigned long now () {
 static void activityLed (byte on) {
 #ifdef LED_PIN
     pinMode(LED_PIN, OUTPUT);
-    digitalWrite(LED_PIN, on);                //RFM12PI - changed to be not inverted 
+    digitalWrite(LED_PIN, on);
 #endif
 }
 
@@ -535,7 +535,7 @@ static void displayVersion () {
 }
 
 void setup () {
-   activityLed(1);
+  activityLed(1);
     delay(100); // shortened for now. Handy with JeeNode Micro V1 where ISP
                 // interaction can be upset by RF12B startup process.
 
@@ -557,15 +557,9 @@ void setup () {
         loadConfig();
     } else {
         memset(&config, 0, sizeof config);
-        
-        //JeeLabs new RFM12 Demo 
-        //config.nodeId = 0x81;       // 868 MHz, node 1
+        config.nodeId = 0x81;       // 868 MHz, node 1
         //config.group = 0xD4;        // default group 212
-        
-        //RFM12Pi default 
-        config.nodeId = 0x81; // node A1 @ 868 MHz
-        config.group = 0xD2;  //210
-        
+        config.group = 0xD2;          // RFM12Pi - default group 210
         config.frequency_offset = 1600;
         config.quiet_mode = true;   // Default flags, quiet on
         saveConfig();
@@ -578,12 +572,11 @@ void setup () {
     showHelp();
 #endif
 
- delay(1000);       //RFM12Pi - keep LED on for 1s to show it's working 
- activityLed(0);
+delay(1000);        //rfm12pi keep LED for for 1s to show it's working at startup 
+activityLed(0);
 }
 
 void loop () {
- 
 #if TINY
     if (_receive_buffer_index)
         handleInput(inChar());
@@ -593,11 +586,10 @@ void loop () {
 #endif
     if (rf12_recvDone()) {
         byte n = rf12_len;
-        
         if (rf12_crc == 0)
-            showString(PSTR("OK"));                   //rfm12pI - strip out since we don't use this on RFM12Pi 
-        else 
-        {
+            activityLed(1);
+            showString(PSTR("OK"));
+        else {
             if (config.quiet_mode)
                 return;
             showString(PSTR(" ?"));
@@ -666,4 +658,5 @@ void loop () {
 
         activityLed(0);
     }
+     activityLed(0);
 }
