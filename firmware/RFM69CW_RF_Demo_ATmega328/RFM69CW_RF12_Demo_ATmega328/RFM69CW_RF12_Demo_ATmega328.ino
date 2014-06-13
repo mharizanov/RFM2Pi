@@ -556,8 +556,15 @@ void setup () {
         loadConfig();
     } else {
         memset(&config, 0, sizeof config);
-        config.nodeId = 0x81;       // 868 MHz, node 1
-        config.group = 0xD4;        // default group 212
+        
+        //JeeLabs new RFM12 Demo 
+        //config.nodeId = 0x81;       // 868 MHz, node 1
+        //config.group = 0xD4;        // default group 212
+        
+        //RFM12Pi default 
+        config.nodeId = 0x81; // node A1 @ 868 MHz
+        config.group = 0xD2;  //210
+        
         config.frequency_offset = 1600;
         config.quiet_mode = true;   // Default flags, quiet on
         saveConfig();
@@ -581,9 +588,13 @@ void loop () {
 #endif
     if (rf12_recvDone()) {
         byte n = rf12_len;
-        if (rf12_crc == 0)
-            showString(PSTR("OK"));
-        else {
+        
+        //if (rf12_crc == 0)
+            //showString(PSTR("OK"));                   //strip out since we don't use this on RFM12Pi 
+        //else 
+        
+        if (rf12_crc != 0)
+        {
             if (config.quiet_mode)
                 return;
             showString(PSTR(" ?"));
