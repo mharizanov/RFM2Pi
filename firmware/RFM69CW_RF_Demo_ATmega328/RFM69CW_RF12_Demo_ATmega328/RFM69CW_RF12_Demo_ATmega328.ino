@@ -587,8 +587,10 @@ void loop () {
     if (rf12_recvDone()) {
         byte n = rf12_len;
         if (rf12_crc == 0)
+        {
             activityLed(1);
             showString(PSTR("OK"));
+        }
         else {
             if (config.quiet_mode)
                 return;
