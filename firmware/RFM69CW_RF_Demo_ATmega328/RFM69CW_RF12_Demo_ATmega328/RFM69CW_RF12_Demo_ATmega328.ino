@@ -1,3 +1,12 @@
+//Slightly edited for RFM12Pi and emonPi opperation June 2014 by Glyn Hudson and Trystan Lea 
+//OpenEnergyMonitor.org
+
+// Changes:
+// * 210 default network group
+// * activity LED to light on startup and each time packet is received 
+
+//--------------------------------------------------------------------------------------------------------------------------------------------
+
 /// @dir RF12demo
 /// Configure some values in EEPROM for easy config of the RF12 later on.
 // 2009-05-06 <jc@wippler.nl> http://opensource.org/licenses/mit-license.php
