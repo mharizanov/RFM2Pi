@@ -39,8 +39,8 @@ typedef struct {
 static RF12Config config;
 
 static char cmd;
-static byte value, stack[20], top, sendLen, dest, quiet;
-static byte testbuf[20], testCounter;
+static byte value, stack[66], top, sendLen, dest, quiet;
+static byte testbuf[66], testCounter;
 
 
 static void saveConfig () {
